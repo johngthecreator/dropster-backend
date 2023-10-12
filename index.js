@@ -17,14 +17,23 @@ const io = new Server(server, {
 });
 
 io.on('connection', (socket) => {
-  console.log(`A user connected ${socket}`);
+  console.log(`A user connected ${socket.id}`);
   
   socket.on('disconnect', () => {
     console.log('A user disconnected');
   });
+
+  socket.on("sendMessage", (message, room) => {
+    socket.to(room).emit("broadcastMessage", message)
+  })
+
+  socket.on("joinRoom", roomId => {
+    socket.join(roomId);
+    console.log(roomId);
+  })
   
 });
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 8080;
 server.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
